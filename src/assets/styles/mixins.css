@@ -1,0 +1,18 @@
+/* .abc {
+  width: 100px;
+  height: 100px;
+}
+.box {
+  .abc
+}
+
+.abc2(@px) {
+  // width:100px;
+  // height: 200px;
+  width: @px;
+  height: @px;
+}
+
+.box2 {
+  .abc2(200px)
+} */

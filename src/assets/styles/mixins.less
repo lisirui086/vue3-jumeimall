@@ -1,0 +1,33 @@
+// less混入
+// 演示混入
+/* .abc {
+  width: 100px;
+  height: 100px;
+}
+.box {
+  .abc
+}
+
+.abc2(@px) {
+  // width:100px;
+  // height: 200px;
+  width: @px;
+  height: @px;
+}
+
+.box2 {
+  .abc2(200px)
+} */
+
+// 鼠标经过上移阴影动画
+.hoverShadow () {
+  // 过渡
+  transition: all .5s;
+  // 鼠标经过时
+  &:hover {
+    // 上移动画 
+    transform: translate3d(0,-3px, 0);
+    // 阴影
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  }
+}
