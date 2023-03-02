@@ -2,6 +2,8 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 // 引入路由组件 路由懒加载
 import Layout from '@/views/Layout.vue'
 import Home from '@/views/home'
+import Category from '@/views/category'
+import Sub from '@/views/category/sub'
 
 // 路由规则
 const routes = [
@@ -12,6 +14,14 @@ const routes = [
       {
         path: '/',
         component: Home
+      },
+      {
+        path: '/category:id',
+        component: Category
+      },
+      {
+        path: '/category/sub/:id',
+        component: Sub
       }
     ]
   }
