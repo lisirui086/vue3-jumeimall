@@ -6,5 +6,7 @@ import store from './store'
 import 'normalize.css'
 // 子弟项目的重置样式和工用样式
 import '@/assets/styles/common.less'
+// 引入自定义UI
+import UI from '@/components/library'
 
-createApp(App).use(store).use(router).mount('#app')
+createApp(App).use(store).use(router).use(UI).mount('#app')
