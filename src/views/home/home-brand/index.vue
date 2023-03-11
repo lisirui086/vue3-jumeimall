@@ -9,7 +9,7 @@
       <ul v-if="brands.length" class="list" :style="{transform: `translateX(${-index*1240}px)`}" >
         <li v-for="brand in brands" :key="brand.id">
           <RouterLink :to="`/category/${brand.id}`">
-            <img :src="brand.logo" :alt="brand.name">
+            <img v-lazy="brand.logo" :alt="brand.name">
           </RouterLink>
         </li>
       </ul>

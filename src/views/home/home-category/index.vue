@@ -22,7 +22,7 @@
       <ul v-if="currCategory && currCategory.goods">
         <li :class="{ active: categoryId === goods.id }" v-for="goods in currCategory.goods" :key="goods.id">
           <RouterLink to="/">
-            <img :src="goods.picture" :alt="goods.name">
+            <img v-lazy="goods.picture" :alt="goods.name">
             <div class="info">
               <p class="name ellipsis-2">{{ goods.name }}</p>
               <p class="desc ellipsis">{{ goods.desc }}</p>
@@ -35,7 +35,7 @@
       <ul v-if="currCategory && currCategory.brands">
         <li class="brand" v-for="brand in currCategory.brands" :key="brand.id">
           <RouterLink to="/">
-            <img :src="brand.picture" :alt="brand.name">
+            <img v-lazy="brand.picture" :alt="brand.name">
             <div class="info">
               <p class="place"><i class="iconfont icon-dingwei"></i>{{ brand.place }}</p>
               <p class="name ellipsis">{{ brand.name }}</p>

@@ -11,3 +11,5 @@ export const findNew = () => request('/home/new', 'get')
 export const findHot = () => request('/home/hot', 'get')
 // 获取商品板块
 export const findGoods = () => request('/home/goods', 'get')
+// 获取最新专题
+export const findSpecial = () => request('/home/special', 'get')
