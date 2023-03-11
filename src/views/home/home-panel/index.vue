@@ -1,3 +1,4 @@
+<!-- 面板公共组件 -->
 <template>
   <div class="home-panel">
     <div class="container">

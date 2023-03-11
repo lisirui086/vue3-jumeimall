@@ -1,3 +1,4 @@
+<!-- 加载动画效果的组件 -->
 <template>
   <div class='home-skeleton'>
     <div class="item" v-for="i in 4" :key="i" :style="{backgroundColor:bg}">

@@ -12,6 +12,10 @@
   <HomeNew />
   <!-- 人气推荐 -->
   <HomeHot />
+  <!-- 热门品牌 -->
+  <HomeBrand />
+  <!-- 产品区块 -->
+  <HomeProduct />
   <!-- vue动画 -->
   <!-- <Transition>
     <div class="box" v-show="show"></div>
@@ -24,11 +28,13 @@ import HomeCategory from '@/views/home/home-category'
 import HomeBanner from '@/views/home/home-banner'
 import HomeNew from '@/views/home/home-new'
 import HomeHot from '@/views/home/home-hot'
+import HomeBrand from '@/views/home/home-brand'
+import HomeProduct from '@/views/home/home-product'
 // 引入API
 import { ref } from 'vue'
 export default {
   name: 'Home',
-  components: { HomeCategory, HomeBanner, HomeNew, HomeHot },
+  components: { HomeCategory, HomeBanner, HomeNew, HomeHot, HomeBrand, HomeProduct },
   setup () {
     const show = ref(true)
     return { show }
