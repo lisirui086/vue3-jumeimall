@@ -16,9 +16,6 @@ export default {
       type: Object,
       default: () => ({})
     }
-  },
-  setup (props) {
-    console.log(props.goods)
   }
 }
 </script>

@@ -4,7 +4,10 @@
       <!-- 面包屑 -->
       <XtxBread>
         <XtxBreadItem to="/">首页</XtxBreadItem>
-        <XtxBreadItem>{{ category.name }}</XtxBreadItem>
+        <Transition name="fade-right" mode="out-in">
+          <!-- 加上key让组件可以更新 -->
+          <XtxBreadItem :key="category.id">{{ category.name }}</XtxBreadItem>
+        </Transition>
       </XtxBread>
       <!-- 轮播图 -->
       <XtxCarousel autoPlay :sliders="sliders" style="height:500px" />
@@ -39,7 +42,7 @@
 import { findBanner } from '@/api/home'
 import { findTopCategory } from '@/api/category'
 // 引入组合式API
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 // 引入vuex
 import { useStore } from 'vuex'
 // 引入路由
@@ -71,9 +74,16 @@ export default {
     })
     // 存储子类信息 默认空数组
     const subList = ref([])
-    findTopCategory(route.params.id).then(data => {
+    // 封装成方法，用于每次路由变化时调用
+    const getSubList = () => findTopCategory(route.params.id).then(data => {
       subList.value = data.result.children
     })
+    // 侦听路由是否变化
+    watch(() => route.params.id, (newValue) => {
+      // 路由可能是从有到无，无到有
+      // newValue && getSubList() 加个严谨判断，只有在顶级类目下才发请求
+      if (newValue && `/category/${newValue}` === route.path) getSubList()
+    }, { immediate: true })
     return { sliders, category, subList }
   }
 }
@@ -87,7 +97,6 @@ export default {
     text-align: center;
     line-height: 100px;
   }
-
   .sub-list {
     margin-top: 20px;
     background-color: #fff;

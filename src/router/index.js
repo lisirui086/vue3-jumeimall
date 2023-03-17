@@ -32,7 +32,16 @@ const routes = [
 const router = createRouter({
   // 路由模式默认hash的路由模式
   history: createWebHashHistory(),
-  routes
+  routes,
+  // 滚动行为 每次切换路由的时候跳转到页面顶部
+  scrollBehavior () {
+    /*
+      VUE2.0是通过x,y控制
+      vue3.0是通过top，left控制
+    */
+    // 始终滚动到顶部
+    return { top: 0 }
+  }
 })
 
 export default router

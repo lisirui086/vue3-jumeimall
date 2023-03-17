@@ -3,12 +3,12 @@
     <li class="home">
       <RouterLink to="/">首页</RouterLink>
     </li>
-    <li v-for="item in list" :key="item.id" @mouseenter="show(item)" @mouseleave="hide(item)">
-      <router-link @click="hide(item)" :to="`category/${item.id}`">{{ item.name }}</router-link>
+    <li v-for="item in list" :key="item.id" @mousemove="show(item)" @mouseleave="hide(item)">
+      <router-link @click="hide(item)" :to="`/category/${item.id}`">{{ item.name }}</router-link>
       <div class="layer" :class="{open:item.open}">
         <ul>
           <li v-for="sub in item.children" :key="sub.id">
-            <router-link @click="hide(item)" :to="`category/sub/${sub.id}`">
+            <router-link @click="hide(item)" :to="`/category/sub/${sub.id}`">
               <img :src="sub.picture" alt="">
               <p>{{ sub.name }}</p>
             </router-link>

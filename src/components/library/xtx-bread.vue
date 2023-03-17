@@ -1,5 +1,4 @@
 <!-- 面包屑组件-初级 -->
-
 <script>
 import { h } from 'vue'
 export default {
