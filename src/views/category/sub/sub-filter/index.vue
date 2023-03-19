@@ -77,6 +77,7 @@ export default {
       })
       // 如果没有选择任何详细规格则置空，也就是全部 不重复发请求
       if (obj.attrs.length === 0) obj.attrs = null
+      console.log(obj)
       return obj
     }
     // 品牌

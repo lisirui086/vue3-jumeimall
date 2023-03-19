@@ -1,9 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 // 引入路由组件 路由懒加载
-import Layout from '@/views/Layout.vue'
-import Home from '@/views/home'
-import Category from '@/views/category'
-import Sub from '@/views/category/sub'
+const Layout = () => import('@/views/Layout.vue')
+const Home = () => import('@/views/home')
+const Category = () => import('@/views/category')
+const Sub = () => import('@/views/category/sub')
+const Goods = () => import('@/views/goods')
 
 // 路由规则
 const routes = [
@@ -22,6 +23,10 @@ const routes = [
       {
         path: '/category/sub/:id',
         component: Sub
+      },
+      {
+        path: '/product/:id',
+        component: Goods
       }
     ]
   }

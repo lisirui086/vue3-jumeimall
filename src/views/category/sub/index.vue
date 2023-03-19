@@ -71,7 +71,7 @@ export default {
       })
     }
     // 置空数据并根据情况重新发请求
-    const resetAndRequest = (data = null) => {
+    const resetAndRequest = (data) => {
       // 关闭数据加载完毕提示
       finished.value = false
       // 合并请求参数，保留之前参数
@@ -85,14 +85,13 @@ export default {
     watch(() => route.params.id, (newValue) => {
       if (newValue && `/category/sub/${newValue}` === route.path) {
         // 关闭数据加载完毕提示
-        /* finished.value = false
+        finished.value = false
         // 二级分类数据置空
         goodsList.value = []
         reqParams = {
           page: 1,
           pageSize: 20
-        } */
-        resetAndRequest()
+        }
       }
     }, { immediate: true })
     const sortChange = (sortParams) => {
