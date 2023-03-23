@@ -4,9 +4,18 @@
     <ul class="carousel-body">
       <!-- fade 显示图片加上 -->
       <li class="carousel-item" :class="{ fade: index === i }" v-for="(item, i) in sliders" :key="i">
-        <RouterLink to="/">
+        <!-- 图片 -->
+        <RouterLink v-if="item.imgUrl" :to="item.hrefUrl">
           <img :src="item.imgUrl" alt="">
         </RouterLink>
+        <!-- 商品列表 item=[] -->
+        <div v-else class="slider">
+          <RouterLink v-for="goods in item" :key="goods.id" :to="`/product/${goods.id}`">
+            <img :src="goods.picture" alt="">
+            <p class="name ellipsis">{{goods.name}}</p>
+            <p class="price">&yen;{{goods.price}}</p>
+          </RouterLink>
+        </div>
       </li>
     </ul>
     <!-- 上一张 -->

@@ -75,16 +75,34 @@ const updateDisabledStatus = (specs, pathMap) => {
     })
   })
 }
+// 默认选中
+const initDefaultSelected = (goods, skuId) => {
+  // 1. 找出Sku得信息
+  // 2. 遍历每一个按钮,按钮的值和sku记录的值相同就选中
+  const sku = goods.skus.find(sku => sku.id === skuId)
+  goods.specs.forEach((item, i) => {
+    const val = item.values.find(val => val.name === sku.specs[i].valueName)
+    val.selected = true
+  })
+}
 export default {
   name: 'GoodsSku',
   props: {
     goods: {
       type: Array,
       default: () => ([])
+    },
+    skuId: {
+      type: String,
+      default: ''
     }
   },
-  setup (props) {
+  setup (props, { emit }) {
     const pathMap = getPathMap(props.goods.skus)
+    // 根据skuid初始化选中
+    if (props.skuId) {
+      initDefaultSelected(props.goods, props.skuId)
+    }
     // 组件初始化：更新按钮禁用状态
     updateDisabledStatus(props.goods.specs, pathMap)
     // 1. 选中与取消选中，约定在每一个按钮都用自己的选中状态数据：selected
@@ -104,6 +122,28 @@ export default {
       }
       // 组件初始化：更新按钮禁用状态
       updateDisabledStatus(props.goods.specs, pathMap)
+      // 将你选择的sku信息通知父组件{skuId, price, oldPrice, inventory, specsText}
+      // 1. 选择完整的sku组合按钮, 才能拿到信息, 提交父组件
+      // 2. 不是完整的sku组合按钮, 提交空对象给父组件
+      const validSelectedValues = getSelectedValues(props.goods.specs).filter(v => v)
+      if (validSelectedValues.length === props.goods.specs.length) {
+        // 完整
+        const skuIds = pathMap[validSelectedValues.join(spliter)]
+        const sku = props.goods.skus.find(sku => sku.id === skuIds[0])
+        emit('change', {
+          skuId: sku.id,
+          price: sku.price,
+          inventory: sku.inventory,
+          oldPrice: sku.oldPrice,
+          // [属性名: 属性值, ..., 属性名: 属性值]
+          // .trim() 取出字符串两端空格
+          specsText: sku.specs.reduce((p, c) => `${p} ${c.name}: ${c.valueName}`, '').trim()
+        })
+      } else {
+        // 不完整
+        // 传入空对象是因为给父组件知道商品规格添加是否完整,不完整不让添加
+        emit('change', {})
+      }
     }
     return { changeSku }
   }
