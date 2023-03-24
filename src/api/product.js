@@ -8,3 +8,8 @@ export const findGoods = (id) => request('/goods', 'get', { id })
 export const findRelevantGoods = ({ id, limit = 16 }) => request('/goods/relevant', 'get', { id, limit })
 // 获取热销榜数据
 export const findGoodsHot = ({ id, type = 1, limit = 3 }) => request('/goods/hot', 'get', { id, type, limit })
+// 获取商品评价数据
+// axios 遇到http,https开头的地址不会再加基准地址
+export const findGoodsCommentInfo = (id) => request(`https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate`, 'get')
+// 查询商品评价列表
+export const findGoodsCommentList = (id, params) => request(`https://mock.boxuegu.com/mock/1175/goods/${id}/evaluate/page`, 'get', params)
