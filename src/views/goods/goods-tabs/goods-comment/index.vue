@@ -2,8 +2,8 @@
   <div class="goods-comment">
     <div class="head">
       <div class="data">
-        <p><span>100</span><span>人购买</span></p>
-        <p><span>99.99%</span><span>好评率</span></p>
+        <p><span>{{commentInfo.salesCount}}</span><span>人购买</span></p>
+        <p><span>{{commentInfo.praisePercent}}</span><span>好评率</span></p>
       </div>
       <div class="tags">
         <div class="dt">大家都在说：</div>
@@ -13,7 +13,7 @@
         </div>
       </div>
     </div>
-    <div class="sort">
+    <div class="sort" v-if="total">
       <span>排序：</span>
       <a href="javascript:;" @click="changeSort(null)" :class="{ active: reqParams.sortField === null }">默认</a>
       <a href="javascript:;" @click="changeSort('createTime')"
@@ -40,6 +40,8 @@
             <span class="attr">{{formatSpecs(item.orderInfo.specs)}}</span>
           </div>
           <div class="text">{{item.content}}</div>
+          <!-- 使用图片预览组件 -->
+          <GoodsCommentImage v-if="item.pictures.length" :pictures="item.pictures" />
           <div class="time">
             <span>{{item.createTime}}</span>
             <span class="zan"><i class="iconfont icon-dianzan"></i>{{item.praiseCount}}</span>
@@ -47,6 +49,7 @@
         </div>
       </div>
     </div>
+    <XtxPagination v-if="total" @change-page="changePageFn" :total="total" :pageSize="reqParams.pageSize" :currentPage="reqParams.page" />
   </div>
 </template>
 <script>
@@ -56,11 +59,16 @@ import { findGoodsCommentInfo, findGoodsCommentList } from '@/api/product'
 import { ref, reactive, watch } from 'vue'
 // 引入vue-router
 import { useRoute } from 'vue-router'
+// 引入子组件
+import GoodsCommentImage from './goods-comment-image'
 export default {
   name: 'GoodsComment',
+  components: { GoodsCommentImage },
   setup () {
     // 存储当前商品的数据
     const commentInfo = ref({})
+    // 存储总页数
+    const total = ref(0)
     // 激活索引
     const currTagIndex = ref(0)
     const changeTag = (step) => {
@@ -99,6 +107,7 @@ export default {
       // 追加全部评论和有图
       result.tags.unshift({ tagCount: result.hasPictureCount, title: '有图', type: 'img' })
       result.tags.unshift({ tagCount: result.evaluateCount, title: '全部评价', type: 'all' })
+      total.value = result.total
       // 将数据给commentInfo
       // commentInfo = result
       commentInfo.value = result
@@ -121,9 +130,14 @@ export default {
         /* result.member.forEach((item) => {
           console.log(item)
         }) */
+        total.value = result.counts
         commentList.value = result.items
       })
     }, { immediate: true })
+    // 改变页码发请求
+    const changePageFn = (newPage) => {
+      reqParams.page = newPage
+    }
     // 将商品规格转换
     const formatSpecs = (specs) => {
       return specs.reduce((p, c) => `${p} ${c.name}: ${c.nameValue}`, '').trim()
@@ -131,10 +145,11 @@ export default {
     // 将评价者的名称加密
     const formatNickname = (name) => {
       // substring() 用于获取字符串中第几位字符，replace用于转化内容 /. 表任何内容跟 /g表全局
-      return name.substring(0, 1) + name.replace(/./g, '*') + name.substring(name.length - 1)
+      // name.slice() 用于排除两端的字符，把中间的变成****
+      return name.substring(0, 1) + name.slice(1, name.length - 1).replace(/./g, '*') + name.substring(name.length - 1)
     }
     // 将商品评价数量传递给父组件
-    return { commentInfo, changeTag, currTagIndex, reqParams, commentList, changeSort, formatSpecs, formatNickname }
+    return { commentInfo, changeTag, currTagIndex, reqParams, commentList, changeSort, formatSpecs, formatNickname, total, changePageFn }
   }
 }
 </script>
