@@ -5,6 +5,7 @@ const Home = () => import('@/views/home')
 const Category = () => import('@/views/category')
 const Sub = () => import('@/views/category/sub')
 const Goods = () => import('@/views/goods')
+const Login = () => import('@/views/login')
 
 // 路由规则
 const routes = [
@@ -29,6 +30,10 @@ const routes = [
         component: Goods
       }
     ]
+  },
+  {
+    path: '/login',
+    component: Login
   }
 ]
 

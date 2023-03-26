@@ -2,19 +2,23 @@
   <div class="goods-tabs">
     <nav>
       <a @click="activeName='Detail'" :class="{active: activeName==='Detail'}" href="javascript:;">商品详情</a>
-      <a @click="activeName='Comment'" :class="{active: activeName==='Comment'}" href="javascript:;">商品评价<span>({{goods.commentCount}})</span></a>
+      <a @click="activeName='Comment'" :class="{active: activeName==='Comment'}" href="javascript:;">商品评价<span>({{commentInfo.evaluateCount}})</span></a>
     </nav>
     <!-- 切换内容的地方 其实是两个组件 -->
     <!-- <Detail v-if="activeName === 'Detail'" />
     <Comment v-if="activeName === 'Comment'" /> -->
-    <component :is="activeName"></component>
+    <component :is="activeName" :commentInfo="commentInfo"></component>
   </div>
 </template>
 
 <script>
+// 引入vue组合式API
 import { ref } from 'vue'
+// 引入子组件
 import Detail from '@/views/goods/goods-tabs/goods-detail'
 import Comment from '@/views/goods/goods-tabs/goods-comment'
+// 引入api接口
+import { findGoodsCommentInfo } from '@/api/product'
 export default {
   name: 'GoodsTabs',
   components: { Detail, Comment },
@@ -24,10 +28,20 @@ export default {
       default: () => ({})
     }
   },
-  setup () {
+  setup (props) {
     // activeName的值默认是Detail商品详情，Comment商品评价
     const activeName = ref('Detail')
-    return { activeName }
+    // 存储商品信息数据
+    const commentInfo = ref({})
+    // 获取获取商品评价数据 发请求
+    findGoodsCommentInfo(props.goods.id).then(({ result }) => {
+      // 追加全部评论和有图
+      result.tags.unshift({ tagCount: result.hasPictureCount, title: '有图', type: 'img' })
+      result.tags.unshift({ tagCount: result.evaluateCount, title: '全部评价', type: 'all' })
+      // 将数据给commentInfo
+      commentInfo.value = result
+    })
+    return { activeName, commentInfo }
   }
 }
 </script>

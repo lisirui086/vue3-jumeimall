@@ -54,7 +54,7 @@
 </template>
 <script>
 // 引入api
-import { findGoodsCommentInfo, findGoodsCommentList } from '@/api/product'
+import { findGoodsCommentList } from '@/api/product'
 // 引入vue的api
 import { ref, reactive, watch } from 'vue'
 // 引入vue-router
@@ -64,9 +64,15 @@ import GoodsCommentImage from './goods-comment-image'
 export default {
   name: 'GoodsComment',
   components: { GoodsCommentImage },
-  setup () {
+  props: {
+    commentInfo: {
+      type: Object,
+      default: () => ({})
+    }
+  },
+  setup (props) {
     // 存储当前商品的数据
-    const commentInfo = ref({})
+    // const commentInfo = ref({})
     // 存储总页数
     const total = ref(0)
     // 激活索引
@@ -75,7 +81,7 @@ export default {
       // 修改active的样式
       currTagIndex.value = step
       // 点击tag的时候修改筛选条件
-      const tag = commentInfo.value.tags[step]
+      const tag = props.commentInfo.tags[step]
       // 情况1：全部评论
       // 情况2： 有图
       // 情况3： 其他
@@ -103,15 +109,13 @@ export default {
     }
     const route = useRoute()
     // 获取商品评价数据 发请求
-    findGoodsCommentInfo(route.params.id).then(({ result }) => {
+    /* findGoodsCommentInfo(route.params.id).then(({ result }) => {
       // 追加全部评论和有图
       result.tags.unshift({ tagCount: result.hasPictureCount, title: '有图', type: 'img' })
       result.tags.unshift({ tagCount: result.evaluateCount, title: '全部评价', type: 'all' })
-      total.value = result.total
       // 将数据给commentInfo
-      // commentInfo = result
       commentInfo.value = result
-    })
+    }) */
     // 准备筛选条件数据
     const reqParams = reactive({
       page: 1,
@@ -149,7 +153,7 @@ export default {
       return name.substring(0, 1) + name.slice(1, name.length - 1).replace(/./g, '*') + name.substring(name.length - 1)
     }
     // 将商品评价数量传递给父组件
-    return { commentInfo, changeTag, currTagIndex, reqParams, commentList, changeSort, formatSpecs, formatNickname, total, changePageFn }
+    return { changeTag, currTagIndex, reqParams, commentList, changeSort, formatSpecs, formatNickname, total, changePageFn }
   }
 }
 </script>
