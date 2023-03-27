@@ -18,7 +18,6 @@ export default {
   },
   // 手机号码
   mobile (value) {
-    if (!value) return '请输入手机号'
     // 规则：不允许有空格
     if (/\s/.test(value)) return '密码不允许有空格'
     // 规格： 1开头，11个字符
@@ -34,7 +33,7 @@ export default {
   },
   // 用户协议
   isAgree (value) {
-    if (!value) return '请勾选用户协议'
+    if (!value) return '请勾选登录协议'
     return true
   }
 }
