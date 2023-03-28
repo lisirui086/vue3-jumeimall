@@ -13,7 +13,8 @@ export default {
     if (!value) return '请输入密码'
     // 规则：密码是8-20个字符 包含至少一个大写字母 包含所有英文符号（不包括空格）。
     if (/\s/.test(value)) return '密码不允许有空格'
-    if (!/^(?=.*[A-Z])(?!.*\s).{8,20}$/.test(value)) return '密码8-20个字符且必须有大写字母'
+    // if (!/^(?=.*[A-Z])(?!.*\s).{8,20}$/.test(value)) return '密码8-20个字符且必须有大写字母'
+    if (!/^\w{6,24}$/.test(value)) return '密码是6-24个字符'
     return true
   },
   // 手机号码

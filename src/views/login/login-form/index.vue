@@ -1,3 +1,4 @@
+<!-- eslint-disable no-undef -->
 <template>
   <div class="account-box">
     <!-- 账号or短信二选一 -->
@@ -36,7 +37,8 @@
         <div class="form-item">
           <div class="input">
             <i class="iconfont icon-user"></i>
-            <Field type="text" placeholder="请输入手机号" name="mobile" :class="{ error: errors.mobile }" v-model="form.mobile" />
+            <Field type="text" placeholder="请输入手机号" name="mobile" :class="{ error: errors.mobile }"
+              v-model="form.mobile" />
           </div>
           <!-- 没通过检验时的提示 -->
           <div class="error" v-if="errors.mobile"><i class="iconfont icon-warning" />{{ errors.mobile }}</div>
@@ -45,7 +47,7 @@
           <div class="input">
             <i class="iconfont icon-code"></i>
             <Field type="password" placeholder="请输入验证码" name="code" :class="{ error: errors.code }" v-model="form.code" />
-            <span class="code">发送验证码</span>
+            <span class="code" @click="sendCode">{{timer === 0 ? '发送验证码' : `${timer}秒后在发送`}}</span>
           </div>
           <!-- 没通过检验时的提示 -->
           <div class="error" v-if="errors.code"><i class="iconfont icon-warning" />{{ errors.code }}</div>
@@ -79,13 +81,21 @@
 </template>
 <script>
 // 引入vue组合式API
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, onUnmounted } from 'vue'
 // 引入vee-validate Form是容器，Field是字段
 import { Form, Field } from 'vee-validate'
 // 引入封装好的校验规则函数
 import schema from '@/utils/vee-validate-schema'
 // 引入Message组件
+// import Message from '@/components/library/Message'
+// 引入api
+import { userAccountLogin, userMobileLoginMsg, userMobileLogin } from '@/api/user'
+// 引入vuex
+import { useStore } from 'vuex'
+// 引入路由
+import { useRoute, useRouter } from 'vue-router'
 import Message from '@/components/library/Message'
+import { useIntervalFn } from '@vueuse/core'
 export default {
   name: 'LoginForm',
   components: { Form, Field },
@@ -126,14 +136,83 @@ export default {
       // Form组件提供了一个resetForm函数清除校验结果
       formCom.value.resetForm()
     })
+    const store = useStore()
+    // useRouter用来调api方法的
+    const router = useRouter()
+    // useRoute拿路由信息
+    const route = useRoute()
+    // 设置定时器
+    const timer = ref(0)
+    // 调用useIntervalFn pause暂停，resume开始
+    // useIntervalFn(回调函数， 执行间隔， 是否立即开启)
+    const { pause, resume } = useIntervalFn(() => {
+      // timer-1
+      timer.value--
+      if (timer.value <= 0) pause()
+    }, 1000, false)
+    // 组件销毁时，清除定时器
+    onUnmounted(() => {
+      pause()
+    })
+    // 发送验证码事件
+    const sendCode = async () => {
+      const vaild = mySchema.mobile(form.mobile)
+      if (vaild === true) {
+        // 通过&&没有在倒计时内可以发送请求
+        if (timer.value === 0) {
+          await userMobileLoginMsg(form.mobile)
+          Message({ type: 'success', text: '发送成功' })
+          timer.value = 60
+          resume()
+        }
+      } else {
+        // 失败，使用vee的错误函数显示错误信息，setFieldError(字段， 错误信息)
+        formCom.value.setFieldError('mobile', vaild)
+      }
+    }
     // 需要在点击登录的时候对整体表单进行校验
     const login = async () => {
       // Form组件提供了一个validate函数作为整体表单校验，当是返回的是一个promise
       const vaild = await formCom.value.validate()
-      vaild ? Message({ type: 'success', text: '登录成功' }) : Message({ type: 'error', text: '用户名或密码错误' })
-      console.dir(vaild)
+      try {
+        if (vaild) {
+          // 提前定义data为后续复用
+          let data = null
+          // 判断是账密登录or验证码登录
+          if (isMessage.value === false) {
+            // 解构form中的account password
+            const { account, password } = form
+            // 发请求 理想情况下账号密码存在时
+            data = await userAccountLogin({ account, password })
+          } else {
+            /* 手机号登录
+              1. 发送验证码
+              1.2 绑定发送验证码按钮点击事件
+              1.3 校验手机号，如果通过才去发送短信（定义API 请求成功开启60s的倒计时，不能再次点击，倒计时结束恢复原样
+              2. 手机号登录， 失败的样式显示出来
+             */
+            // mobile and code
+            const { mobile, code } = form
+            data = await userMobileLogin({ mobile, code })
+            console.dir(data)
+          }
+          // 存储用户信息
+          const { id, avatar, nickName, account, mobile, token } = data.result
+          // 将参数存储到vuex中
+          store.commit('user/SETUSER', { id, avatar, nickName, account, mobile, token })
+          // 进行跳转 跳转到上一页或者首页
+          router.push(route.query.redirectUrl || '/')
+          // 消息提示
+          Message({ type: 'success', text: '登录成功' })
+        }
+      } catch (e) {
+        // 失败提示
+        if (e.response.data) {
+          Message({ type: 'error', text: e.response.data.msg || '登录失败' })
+        }
+      }
     }
-    return { isMessage, form, schema: mySchema, formCom, login }
+    return { isMessage, form, schema: mySchema, formCom, login, sendCode, timer }
   }
 }
 </script>
@@ -255,4 +334,5 @@ export default {
       }
     }
   }
-}</style>
+}
+</style>
