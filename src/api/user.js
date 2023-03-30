@@ -7,3 +7,9 @@ export const userAccountLogin = ({ account, password }) => request('/login', 'po
 export const userMobileLoginMsg = (mobile) => request('/login/code', 'get', { mobile })
 // 手机号登录
 export const userMobileLogin = ({ mobile, code }) => request('/login/code', 'post', { mobile, code })
+// QQ登录
+export const userQQLogin = (unionId, source = 1) => request('/login/social', 'post', { unionId, source })
+// 获取QQ绑定时短信验证码
+export const userQQBindCode = (mobile) => request('/login/social/code', 'get', { mobile })
+// qq登录立即绑定
+export const userQQBindLogin = ({ unionId, mobile, code }) => request('/login/social/bind', 'post', { unionId, mobile, code })

@@ -17,7 +17,9 @@ export default {
         // 手机号
         mobile: '',
         token: ''
-      }
+      },
+      // 登录后的回跳地址
+      redirectUrl: '/'
     }
   },
   // 准备mutations 用于操作数据(state)
@@ -26,6 +28,10 @@ export default {
     // 修改用户信息 payload就是用户信息对象
     SETUSER (state, payload) {
       state.profile = payload
+    },
+    // 修改回跳地址
+    SETREDIRECT (state, url) {
+      state.redirectUrl = url
     }
   },
   // 2 准备actions 用于响应组件中的动作

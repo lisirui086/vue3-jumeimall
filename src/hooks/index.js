@@ -2,7 +2,7 @@
 
 // target { Element } Dom对象
 // apiFn { function } API函数
-// 引入 useIntersectionObserver  方法
+// 引入 useIntersectionObserver   方法
 import { useIntersectionObserver } from '@vueuse/core'
 import { ref } from 'vue'
 // 懒加载函数
@@ -19,7 +19,7 @@ export const useLazyData = (apiFn) => {
         // 停止观察
         stop()
         // 调用API函数
-        apiFn().then(data => {
+        apiFn().then((data) => {
           result.value = data.result
         })
       }

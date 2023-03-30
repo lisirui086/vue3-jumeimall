@@ -12,13 +12,6 @@
         </nav>
         <!-- 账户登录和扫码登录的切换 -->
         <component :is="activeName"></component>
-        <!-- 表单 -->
-        <!-- <LoginForm v-if="activeName==='LoginForm'"></LoginForm> -->
-        <!-- 二维码 -->
-        <!-- <div v-if="activeName === 'LoginQrcode'" class="qrcode-box">
-          <img src="@/assets/images/qrcode.jpg" alt="">
-          <p>打开 <a href="javascript:;">小兔鲜App</a> 扫码登录</p>
-        </div> -->
       </div>
     </section>
     <LoginFooter />
@@ -30,12 +23,19 @@ import LoginHeader from '@/views/login/login-header'
 import LoginFooter from '@/views/login/login-footer'
 import LoginForm from '@/views/login/login-form'
 import LoginQrcode from '@/views/login/login-qrcode'
-// 引入vue组合式API
+// 引入vue组合式API、vue-router
 import { ref } from 'vue'
+import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 export default {
   name: 'Login',
   components: { LoginHeader, LoginFooter, LoginForm, LoginQrcode },
   setup () {
+    // vuex和vue-router
+    const store = useStore()
+    const route = useRoute()
+    // 存储回跳地址
+    store.commit('user/SETREDIRECT', route.query.redirectUrl || '/')
     // 控制账户登录和扫码登录的切换，默认激活的是账号登录
     const activeName = ref('LoginForm')
     return { activeName }

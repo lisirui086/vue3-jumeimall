@@ -47,7 +47,7 @@ instance.interceptors.response.use(res => res.data, err => {
     // js模块中：router.currentRoute.value.fullPath 就是当前路由地址，router.currentRoute是ref响应式的
     // encodeURIComponent转码，解决 = % $ 特殊字符被转义
     const fullPath = encodeURIComponent(router.currentRoute.value.fullPath)
-    router.push(`/login?redirectUrl=${fullPath}`)
+    router.push('/login?redirectUrl=' + fullPath)
     // 3. 跳转需要传参（当前路由地址)给登录页码
   }
   return Promise.reject(err)

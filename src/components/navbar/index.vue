@@ -4,7 +4,7 @@
       <ul>
         <template v-if="profile.token">
           <li><a href="javascript:;"><i class="iconfont icon-user"></i>{{ profile.account }}</a></li>
-          <li><a href="javascript:;">退出登录</a></li>
+          <li><a href="javascript:;" @click="logout">退出登录</a></li>
         </template>
         <template v-else>
           <li><router-link to="/login">请先登录</router-link></li>
@@ -24,6 +24,10 @@
 import { useStore } from 'vuex'
 // 引入组合式API
 import { computed } from 'vue'
+// 引入vue-router
+import { useRouter } from 'vue-router'
+// 引入消息组件
+import Message from '@/components/library/Message'
 export default {
   name: 'AppTopnav',
   setup () {
@@ -34,7 +38,16 @@ export default {
     const profile = computed(() => {
       return store.state.user.profile
     })
-    return { profile }
+    const router = useRouter()
+    // 退出登录
+    const logout = () => {
+      // 清空vuex的用户信息和本地存储的信息
+      store.commit('user/SETUSER', {})
+      // 跳转登录
+      router.push('/login')
+      Message({ type: 'success', text: '账号已退出' })
+    }
+    return { profile, logout }
   }
 }
 </script>

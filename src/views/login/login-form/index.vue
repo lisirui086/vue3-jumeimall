@@ -4,10 +4,10 @@
     <!-- 账号or短信二选一 -->
     <div class="toggle">
       <a v-if="!isMessage" href="javascript:;" @click="isMessage = true">
-        <i class="iconfont icon-user"></i> 使用账号登录
+        <i class="iconfont icon-user"></i> 使用短信登录
       </a>
       <a v-else href="javascript:;" @click="isMessage = false">
-        <i class="iconfont icon-msg"></i> 使用短信登录
+        <i class="iconfont icon-msg"></i> 使用账号登录
       </a>
     </div>
     <Form ref="formCom" class="form" :validation-schema="schema" autocomplete="off" v-slot="{ errors }">
@@ -71,7 +71,11 @@
       <a href="javascript:; " class="btn" @click="login">登录</a>
     </Form>
     <div class="action">
-      <img src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png" alt="">
+      <a href="https://graph.qq.com/oauth2.0/authorize?client_id=100556005&response_type=token&scope=all&redirect_uri=http%3A%2F%2Fwww.corho.com%3A8080%2F%23%2Flogin%2Fcallback">
+        <img src="https://qzonestyle.gtimg.cn/qzone/vas/opensns/res/img/Connect_logo_7.png" alt="">
+      </a>
+      <!-- 创建qq登录按钮 -->
+      <!-- <span id="qqLoginBtn"></span> -->
       <div class="url">
         <a href="javascript:;">忘记密码</a>
         <a href="javascript:;">免费注册</a>
@@ -86,8 +90,6 @@ import { ref, reactive, watch, onUnmounted } from 'vue'
 import { Form, Field } from 'vee-validate'
 // 引入封装好的校验规则函数
 import schema from '@/utils/vee-validate-schema'
-// 引入Message组件
-// import Message from '@/components/library/Message'
 // 引入api
 import { userAccountLogin, userMobileLoginMsg, userMobileLogin } from '@/api/user'
 // 引入vuex
@@ -96,6 +98,8 @@ import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import Message from '@/components/library/Message'
 import { useIntervalFn } from '@vueuse/core'
+// 引入QQ的api
+// import QC from 'qc'
 export default {
   name: 'LoginForm',
   components: { Form, Field },
@@ -194,7 +198,6 @@ export default {
             // mobile and code
             const { mobile, code } = form
             data = await userMobileLogin({ mobile, code })
-            console.dir(data)
           }
           // 存储用户信息
           const { id, avatar, nickName, account, mobile, token } = data.result
@@ -212,6 +215,12 @@ export default {
         }
       }
     }
+    // QQ登录按钮
+    /* onMounted(() => {
+      QC.Login({
+        btnId: 'qqLoginBtn'
+      })
+    }) */
     return { isMessage, form, schema: mySchema, formCom, login, sendCode, timer }
   }
 }

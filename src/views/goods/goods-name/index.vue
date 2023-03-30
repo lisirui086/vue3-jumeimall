@@ -47,7 +47,7 @@ export default {
     // 有默认地址 （已登录
     if (props.goods.userAddresses) {
       // 找userAddresses中哪个是默认地址， isDefault是1的默认地址
-      const defaultAddresses = props.goods.userAddresses(item => item.isDefault === 1)
+      const defaultAddresses = props.goods.userAddresses.find(item => item.isDefault === 1)
       // defaultAddresses是有数据的话提前默认情况的
       if (defaultAddresses) {
         provinceCode.value = defaultAddresses.provinceCode

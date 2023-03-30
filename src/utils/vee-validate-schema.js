@@ -19,6 +19,7 @@ export default {
   },
   // 手机号码
   mobile (value) {
+    if (!value) return '请输入手机号'
     // 规则：不允许有空格
     if (/\s/.test(value)) return '密码不允许有空格'
     // 规格： 1开头，11个字符
@@ -29,7 +30,7 @@ export default {
   code (value) {
     if (!value) return '请输入验证码'
     // 规则：６个字符
-    if (/^d{6}$/.test(value)) return '请输入6位数的验证码'
+    if (!/^\d{6}$/.test(value)) return '短信验证码6个数字'
     return true
   },
   // 用户协议

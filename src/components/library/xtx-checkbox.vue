@@ -41,9 +41,10 @@ export default {
     // #endregion
     const isCheck = useVModel(props, 'modelValue', emit)
     const changeCheck = () => {
+      const newVal = !isCheck.value
       // 通知父组件
-      isCheck.value = !isCheck.value
-      emit('change', isCheck)
+      isCheck.value = newVal
+      emit('change', newVal)
     }
     return { isCheck, changeCheck }
   }
