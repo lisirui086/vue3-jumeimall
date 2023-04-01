@@ -16,7 +16,7 @@ export default {
     // 消息提示类型
     type: {
       type: String,
-      defalut: 'warn'
+      default: 'warn'
     },
     // 消息提示文本
     text: {

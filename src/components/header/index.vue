@@ -10,11 +10,8 @@
         <i class="iconfont icon-search"></i>
         <input type="text" placeholder="搜一搜">
       </div>
-      <div class="cart">
-        <a class="curr" href="#">
-          <i class="iconfont icon-cart"></i><em>2</em>
-        </a>
-      </div>
+      <!-- 购物车 -->
+      <HeaderCart />
     </div>
   </header>
 </template>
@@ -22,9 +19,10 @@
 <script>
 // 引入子组件
 import HeaderNav from '@/components/header/header-sticky/header-nav'
+import HeaderCart from '@/components/header/header-cart'
 export default {
   name: 'AppHeader',
-  components: { HeaderNav }
+  components: { HeaderNav, HeaderCart }
 }
 </script>
 
@@ -45,7 +43,7 @@ export default {
       height: 132px;
       width: 100%;
       text-indent: -9999px;
-      background: url(../../assets/images/logo.png) no-repeat center 18px / contain;
+      background: url('@/assets/images/logo.png') no-repeat center 18px / contain;
     }
   }
 
@@ -67,34 +65,5 @@ export default {
       color: #666;
     }
   }
-
-  .cart {
-    width: 50px;
-
-    .curr {
-      height: 32px;
-      line-height: 32px;
-      text-align: center;
-      position: relative;
-      display: block;
-
-      .icon-cart {
-        font-size: 22px;
-      }
-
-      em {
-        font-style: normal;
-        position: absolute;
-        right: 0;
-        top: 0;
-        padding: 1px 6px;
-        line-height: 1;
-        background: @helpColor;
-        color: #fff;
-        font-size: 12px;
-        border-radius: 10px;
-        font-family: Arial;
-      }
-    }
-  }
-}</style>
+}
+</style>

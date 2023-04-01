@@ -4,9 +4,9 @@
       <!-- 面包屑 -->
       <XtxBread>
         <XtxBreadItem to="/">首页</XtxBreadItem>
-        <XtxBreadItem :to="`/category/${goods.categories[1].id}`">{{goods.categories[1].name}}</XtxBreadItem>
-        <XtxBreadItem :to="`/category/sub/${goods.categories[0].id}`">{{goods.categories[0].name}}</XtxBreadItem>
-        <XtxBreadItem >{{goods.name}}</XtxBreadItem>
+        <XtxBreadItem :to="`/category/${goods.categories[1].id}`">{{ goods.categories[1].name }}</XtxBreadItem>
+        <XtxBreadItem :to="`/category/sub/${goods.categories[0].id}`">{{ goods.categories[0].name }}</XtxBreadItem>
+        <XtxBreadItem>{{ goods.name }}</XtxBreadItem>
       </XtxBread>
       <!-- 商品信息 -->
       <div class="goods-info">
@@ -23,7 +23,7 @@
           <!-- 添加商品数量 -->
           <XtxNumbox v-model="num" :max="goods.inventory" label="数量" />
           <!-- 添加到购物车按钮 -->
-          <XtxButton type="primary" style="margin-top:20px;">加入购物车</XtxButton>
+          <XtxButton @click="insertCart" type="primary" style="margin-top:20px;">加入购物车</XtxButton>
         </div>
       </div>
       <!-- 商品推荐 -->
@@ -60,6 +60,8 @@ import GoodsWarn from '@/views/goods/goods-warn'
 import { nextTick, ref, watch, provide } from 'vue'
 import { useRoute } from 'vue-router'
 import { findGoods } from '@/api/product'
+import { useStore } from 'vuex'
+import Message from '@/components/library/Message'
 export default {
   name: 'XtxGoodsPage',
   components: { GoodsRelevant, GoodsImage, GoodsSales, GoodsName, GoodsSku, GoodsTabs, GoodsHot, GoodsWarn },
@@ -68,6 +70,7 @@ export default {
     const num = ref(1)
     // 1. 获取商品详情
     const goods = useGoods()
+    const currSku = ref(null)
     const changeSku = (sku) => {
       // 修改商品的现价原价库存信息
       if (sku.skuId) {
@@ -75,10 +78,38 @@ export default {
         goods.value.oldPrice = sku.oldPrice
         goods.value.inventory = sku.inventory
       }
+      // 记录选择后的sku，可能有数据，可能没有数据{} 是空对象就代表没有选择完整
+      currSku.value = sku
+    }
+    // 添加到购物车
+    const store = useStore()
+    const insertCart = () => {
+      // 约定加入购物车字段必须和后端保持一致
+      // 他们是：id, skuId, name, attrsText, picture, price, nowPrice, selected, stock, count, isEffective
+      if (currSku.value && currSku.value.skuId) {
+        store.dispatch('cart/insertCart', {
+          id: goods.value.id,
+          skuId: currSku.value.skuId,
+          name: goods.value.name,
+          picture: goods.value.mainPictures[0],
+          price: currSku.value.price,
+          nowPrice: currSku.value.price,
+          count: num.value,
+          attrsText: currSku.value.specsText,
+          selected: true,
+          isEffective: true,
+          stock: currSku.value.inventory
+        }).then(() => {
+          Message({ type: 'success', text: '加入购物车成功' })
+        })
+      } else {
+        // 消息提示
+        Message({ text: '请选择完整规格' })
+      }
     }
     // 提供数据给后代组件使用
     provide('goods', goods)
-    return { goods, changeSku, num }
+    return { goods, changeSku, num, insertCart }
   }
 }
 // 获取商品详情
@@ -106,11 +137,13 @@ const useGoods = () => {
   min-height: 600px;
   background: #fff;
   display: flex;
+
   .media {
     width: 580px;
     height: 600px;
     padding: 30px 50px;
   }
+
   .spec {
     flex: 1;
     padding: 30px 30px 30px 0;
