@@ -1,3 +1,5 @@
+import { getNewCartGoods } from '@/api/cart'
+
 // 购物车模块
 export default {
   // 开启匿名空间
@@ -28,6 +30,23 @@ export default {
       }
       // z追加新的
       state.list.unshift(payload)
+    },
+    // 修改购物车商品
+    UPDATECART (state, payload) {
+      // goods 商品信息： nowPrice, stock, isEffective
+      // goods 商品对象的字段不固定，对象中有哪些字段就改哪些字段，字段的值合理才改
+      const updateGoods = state.list.find(goods => goods.skuId === payload.skuId)
+      for (const key in payload) {
+        // 判断字段值是否合理
+        if (payload[key] !== undefined && payload[key] !== null && payload[key] !== '') {
+          updateGoods[key] = payload[key]
+        }
+      }
+    },
+    // 删除购物车商品
+    DELETECART (state, skuId) {
+      const index = state.list.findIndex(item => item.skuId === skuId)
+      state.list.splice(index, 1)
     }
   },
   actions: {
@@ -39,6 +58,84 @@ export default {
         } else {
           // 未登录
           commit('INSERTCART', payload)
+          resolve()
+        }
+      })
+    },
+    // 获取商品列表
+    findCart ({ rootState, state, commit }) {
+      return new Promise((resolve, reject) => {
+        // 已登录 or 未登录
+        if (rootState.user.profile.token) {
+          // 已登录
+        } else {
+          // 未登录
+          // 同时发送请求(有几件商品发几个请求)等所有请求成功，一并去修改本地数据
+          // Promise.all(promise数组).then(dataList=>{ 一并去修改本地数据 })
+          const promiseArr = state.list.map(goods => {
+            return getNewCartGoods(goods.skuId)
+          })
+          Promise.all(promiseArr).then(dataList => {
+            // 更新本地购物车
+            dataList.forEach((data, i) => {
+              commit('UPDATECART', { skuId: state.list[i].skuId, ...data.result })
+            })
+            resolve()
+          })
+        }
+      })
+    },
+    // 删除购物车商品
+    deleteCart (ctx, payload) {
+      // 单条删除， payload现在就是skuId
+      return new Promise((resolve, reject) => {
+        // 判断是否登录
+        if (ctx.rootState.user.profile.token) {
+          // 已登录
+        } else {
+          // 未登录
+          ctx.commit('DELETECART', payload)
+          resolve()
+        }
+      })
+    },
+    // 修改购物车（选中状态，数量
+    updateCart (ctx, payload) {
+      return new Promise((resolve, reject) => {
+        if (ctx.rootState.user.profile.token) {
+          // 已登录
+        } else {
+          // 未登录
+          ctx.commit('UPDATECART', payload)
+          resolve()
+        }
+      })
+    },
+    // 全选与取消全选
+    checkAllCart (ctx, selected) {
+      return new Promise((resolve, reject) => {
+        if (ctx.rootState.user.profile.token) {
+          // 已登录
+        } else {
+          // 未登录
+          // 逐个根据传递过来的selected修改validList所有的selected
+          ctx.getters.validList.forEach(item => {
+            ctx.commit('UPDATECART', { skuId: item.skuId, selected })
+          })
+          resolve()
+        }
+      })
+    },
+    // 批量删除
+    batchDeleteCart (ctx, isClean) {
+      return new Promise((resolve, reject) => {
+        if (ctx.rootState.user.profile.token) {
+          // 已登录
+        } else {
+          // 未登录 isClean为true是删除无效商品 反之删除选中商品
+          ctx.getters[isClean ? 'invalidList' : 'selectedList'].forEach(item => {
+            ctx.commit('DELETECART', item.skuId)
+          })
           resolve()
         }
       })
@@ -56,7 +153,27 @@ export default {
     },
     // 有效商品总金额
     validAmount (state, getters) {
-      return getters.validList.reduce((p, c) => p + c.nowPrice * 100 * c.count, 0) / 100
+      return getters.validList.reduce((p, c) => p + Math.round(c.nowPrice * 100) * c.count, 0) / 100
+    },
+    // 无效商品列表
+    invalidList (state) {
+      return state.list.filter(item => item.stock <= 0 || !item.isEffective)
+    },
+    // 已选商品列表
+    selectedList (state, getters) {
+      return getters.validList.filter(item => item.selected)
+    },
+    // 已选商品总件数
+    selectedTotal (state, getters) {
+      return getters.selectedList.reduce((p, c) => p + c.count, 0)
+    },
+    // 已选商品总金额
+    selectedAmount (state, getters) {
+      return getters.selectedList.reduce((p, c) => p + Math.round(c.nowPrice * 100) * c.count, 0) / 100
+    },
+    // 是否全选
+    isCheckAll (state, getters) {
+      return getters.selectedList.length === getters.validList.length && getters.selectedList.length !== 0
     }
   }
 }

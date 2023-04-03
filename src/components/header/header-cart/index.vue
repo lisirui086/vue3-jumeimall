@@ -1,23 +1,25 @@
 <template>
   <div class="cart">
-    <a class="curr" href="javascript:;">
+    <!-- 购物车图标 -->
+    <router-link class="curr" to='/cart'>
       <i class="iconfont icon-cart"></i><em>{{total}}</em>
-    </a>
-    <div class="layer">
+    </router-link>
+    <!-- 购物车弹出层 -->
+    <div class="layer" v-if="total > 0 && $route.path !== '/cart'">
       <div class="list">
         <div class="item" v-for="item in list" :key="item.skuId">
-          <RouterLink to="">
+          <RouterLink :to='`/product/${item.id}`'>
             <img :src="item.picture" alt="">
             <div class="center">
-              <p class="name ellipsis-2">{{item.name}}1</p>
-              <p class="attr ellipsis">{{item.attrsText}}1</p>
+              <p class="name ellipsis-2">{{item.name}}</p>
+              <p class="attr ellipsis">{{item.attrsText}}</p>
             </div>
             <div class="right">
-              <p class="price">&yen;{{item.nowPrice}}1</p>
-              <p class="count">x{{item.count}}1</p>
+              <p class="price">&yen;{{item.nowPrice}}</p>
+              <p class="count">x{{item.count}}</p>
             </div>
           </RouterLink>
-          <i class="iconfont icon-close-new"></i>
+          <i class="iconfont icon-close-new" @click="deleteCart(item.skuId)"></i>
         </div>
       </div>
       <div class="foot">
@@ -25,7 +27,7 @@
           <p>共 {{total}} 件商品</p>
           <p>&yen;{{amount}}</p>
         </div>
-        <XtxButton type="plain">去购物车结算</XtxButton>
+        <XtxButton @click="$router.push('/cart')" type="plain">去购物车结算</XtxButton>
       </div>
     </div>
   </div>
@@ -34,15 +36,23 @@
 // 引入vuex
 import { useStore } from 'vuex'
 import { computed } from 'vue'
+import Message from '@/components/library/Message'
 export default {
   name: 'HeaderCart',
   setup () {
-    const { getters } = useStore()
+    const { getters, dispatch } = useStore()
     const list = computed(() => getters['cart/validList'])
-    console.dir(list)
     const total = computed(() => getters['cart/validTotal'])
     const amount = computed(() => getters['cart/validAmount'])
-    return { list, total, amount }
+    // 更新购物车
+    dispatch('cart/findCart').then(() => {
+      Message({ type: 'success', text: '更新本地购物车成功' })
+    })
+    // 删除购物车商品
+    const deleteCart = (skuId) => {
+      dispatch('cart/deleteCart', skuId)
+    }
+    return { list, total, amount, deleteCart }
   }
 }
 </script>
