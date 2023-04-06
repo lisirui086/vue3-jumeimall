@@ -122,10 +122,12 @@ export default {
           const { id, avatar, nickName, account, mobile, token } = data.result
           // 将参数存储到vuex中
           store.commit('user/SETUSER', { id, avatar, nickName, account, mobile, token })
-          // 进行跳转 跳转到上一页或者首页
-          router.push(route.query.redirectUrl || '/')
-          // 消息提示
-          Message({ type: 'success', text: '绑定成功' })
+          store.dispatch('cart/mergeCart').then(() => {
+            // 进行跳转 跳转到上一页或者首页
+            router.push(route.query.redirectUrl || '/')
+            // 消息提示
+            Message({ type: 'success', text: '绑定成功' })
+          })
         }).catch(e => {
           if (e.response.data) {
             // 消息提示

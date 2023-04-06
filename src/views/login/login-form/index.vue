@@ -203,10 +203,12 @@ export default {
           const { id, avatar, nickName, account, mobile, token } = data.result
           // 将参数存储到vuex中
           store.commit('user/SETUSER', { id, avatar, nickName, account, mobile, token })
-          // 进行跳转 跳转到上一页或者首页
-          router.push(route.query.redirectUrl || '/')
-          // 消息提示
-          Message({ type: 'success', text: '登录成功' })
+          store.dispatch('cart/mergeCart').then(() => {
+            // 进行跳转 跳转到上一页或者首页
+            router.push(route.query.redirectUrl || '/')
+            // 消息提示
+            Message({ type: 'success', text: `${form.account}，欢迎你` })
+          })
         }
       } catch (e) {
         // 失败提示

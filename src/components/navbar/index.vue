@@ -43,6 +43,8 @@ export default {
     const logout = () => {
       // 清空vuex的用户信息和本地存储的信息
       store.commit('user/SETUSER', {})
+      // 清空购物车数据
+      store.commit('cart/SETCART', [])
       // 跳转登录
       router.push('/login')
       Message({ type: 'success', text: '账号已退出' })

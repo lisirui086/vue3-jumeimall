@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import store from '@/store'
 // 引入路由组件 路由懒加载
 const Layout = () => import('@/views/Layout.vue')
 const Home = () => import('@/views/home')
@@ -8,6 +9,7 @@ const Goods = () => import('@/views/goods')
 const Login = () => import('@/views/login')
 const LoginCallback = () => import('@/views/login/login-callback')
 const Cart = () => import('@/views/cart')
+const PayCheckout = () => import('@/views/member/pay/checkout.vue')
 
 // 路由规则
 const routes = [
@@ -34,6 +36,10 @@ const routes = [
       {
         path: '/cart',
         component: Cart
+      },
+      {
+        path: '/member/checkout',
+        component: PayCheckout
       }
     ]
   },
@@ -62,6 +68,15 @@ const router = createRouter({
     // 始终滚动到顶部
     return { top: 0 }
   }
+})
+// 全局前置守卫
+router.beforeEach((to, from, next) => {
+  // 判断用户是否登录
+  const { token } = store.state.user.profile
+  if (!token && to.path.startsWith('/member')) {
+    return next('/login?redirectUrl=' + encodeURIComponent(to.fullPath))
+  }
+  next()
 })
 
 export default router

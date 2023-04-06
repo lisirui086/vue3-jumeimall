@@ -1,0 +1,123 @@
+<template>
+  <div class="checkout-address">
+    <div class="text">
+      <div class="none" v-if="!showAddress">您需要先添加收货地址才可提交订单。</div>
+      <ul v-if="showAddress">
+        <li><span>收<i />货<i />人：</span>{{ showAddress.receiver }}</li>
+        <li><span>联系方式：</span>{{ showAddress.contact }}</li>
+        <li><span>收货地址：</span>{{ showAddress.fullLocation + showAddress.countyCode + showAddress.address }}</li>
+      </ul>
+      <a href="javascript:;">修改地址</a>
+    </div>
+    <div class="action">
+      <XtxButton class="btn" @click="visibleDialog = true">切换地址</XtxButton>
+      <XtxButton class="btn">添加地址</XtxButton>
+    </div>
+    <XtxDialog title="切换收货地址" v-model:visible="visibleDialog">
+      内容
+      <template #footer>
+        <XtxButton type="gray" style="margin-right: 20px" @click="visibleDialog = false">取消</XtxButton>
+        <XtxButton type="primary" @click="visibleDialog = false">确认</XtxButton>
+      </template>
+    </XtxDialog>
+  </div>
+</template>
+<script>
+import { ref } from 'vue'
+export default {
+  name: 'CheckoutAddress',
+  props: {
+    // 收货地址列表
+    list: {
+      type: Array,
+      default: () => []
+    }
+  },
+  setup (props) {
+    // 1. 找到默认地址 默认地址字段： isDefault 0为默认，1不是
+    // 2. 没有默认地址，使用第一条收货地址
+    // 3. 如果没有收货地址，提示添加收货地址
+    const showAddress = ref(null)
+    // 遍历所有地址信息，将收货人手机号码中间4位改成****  13666666666
+    props.list.forEach(item => {
+      // 转化格式
+      item.contact = item.contact.replace(/^(\d{3})\d{4}(\d{4})/, '$1****$2')
+      // item.contact = item.contact.substring(0, 3) + item.contact.slice(3, 7).replace(/./g, '*') + item.contact.substring(7, 11)
+    })
+    const defaultAddress = props.list.find(item => item.default === 0)
+    if (defaultAddress) {
+      showAddress.value = defaultAddress
+    } else {
+      showAddress.value = props.list.length && props.list[0]
+    }
+    // 控制对话框组件显示隐藏
+    const visibleDialog = ref(false)
+    return { showAddress, visibleDialog }
+  }
+}
+</script>
+<style scoped lang="less">
+.checkout-address {
+  border: 1px solid #f5f5f5;
+  display: flex;
+  align-items: center;
+
+  .text {
+    flex: 1;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+
+    .none {
+      line-height: 90px;
+      color: #999;
+      text-align: center;
+      width: 100%;
+    }
+
+    >ul {
+      flex: 1;
+      padding: 20px;
+
+      li {
+        line-height: 30px;
+
+        span {
+          color: #999;
+          margin-right: 5px;
+
+          >i {
+            width: 0.5em;
+            display: inline-block;
+          }
+        }
+      }
+    }
+
+    >a {
+      color: @xtxColor;
+      width: 160px;
+      text-align: center;
+      height: 90px;
+      line-height: 90px;
+      border-right: 1px solid #f5f5f5;
+    }
+  }
+
+  .action {
+    width: 420px;
+    text-align: center;
+
+    .btn {
+      width: 140px;
+      height: 46px;
+      line-height: 44px;
+      font-size: 14px;
+
+      &:first-child {
+        margin-right: 10px;
+      }
+    }
+  }
+}
+</style>
