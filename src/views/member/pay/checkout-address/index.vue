@@ -10,22 +10,34 @@
       <a href="javascript:;">修改地址</a>
     </div>
     <div class="action">
-      <XtxButton class="btn" @click="visibleDialog = true">切换地址</XtxButton>
-      <XtxButton class="btn">添加地址</XtxButton>
+      <XtxButton class="btn" @click="openvisibleDialog">切换地址</XtxButton>
+      <XtxButton class="btn" @click="openAddressEdit">添加地址</XtxButton>
     </div>
     <XtxDialog title="切换收货地址" v-model:visible="visibleDialog">
-      内容
+      <div class="text item" :class="{ active: selectedAddress && selectedAddress.id === item.id }"
+        @click="selectedAddress = item" v-for="item in list" :key="item.id">
+        <ul>
+          <li><span>收<i />货<i />人：</span>{{ item.receiver }}</li>
+          <li><span>联系方式：</span>{{ item.contact }}</li>
+          <li><span>收货地址：</span>{{ item.fullLocation.replace(/ /g, '') + item.address }}</li>
+        </ul>
+      </div>
       <template #footer>
         <XtxButton type="gray" style="margin-right: 20px" @click="visibleDialog = false">取消</XtxButton>
-        <XtxButton type="primary" @click="visibleDialog = false">确认</XtxButton>
+        <XtxButton type="primary" @click="confirmAddressFn">确认</XtxButton>
       </template>
     </XtxDialog>
+    <!-- 添加收货地址 -->
+    <AddressEdit ref="addressEditComp" @on-success="successHandler" />
   </div>
 </template>
 <script>
 import { ref } from 'vue'
+// 引入子组件
+import AddressEdit from '@/views/member/pay/address-edit'
 export default {
   name: 'CheckoutAddress',
+  components: { AddressEdit },
   props: {
     // 收货地址列表
     list: {
@@ -33,7 +45,8 @@ export default {
       default: () => []
     }
   },
-  setup (props) {
+  emits: ['change'],
+  setup (props, { emit }) {
     // 1. 找到默认地址 默认地址字段： isDefault 0为默认，1不是
     // 2. 没有默认地址，使用第一条收货地址
     // 3. 如果没有收货地址，提示添加收货地址
@@ -52,7 +65,49 @@ export default {
     }
     // 控制对话框组件显示隐藏
     const visibleDialog = ref(false)
-    return { showAddress, visibleDialog }
+    // 自定义事件 通知父组件
+    emit('change', showAddress.value && showAddress.value.id)
+    // 存储切换地址中选择的收货地址对象
+    const selectedAddress = ref(null)
+    // 切换地址确定按钮
+    const confirmAddressFn = () => {
+      // 判断用户是否切换选了收货地址
+      if (selectedAddress.value) {
+        // 将切换选中的收货地址信息保存，将id给父组件
+        showAddress.value = selectedAddress.value
+        emit('change', selectedAddress.value.id)
+      }
+      /* showAddress.value = selectedAddress.value
+      emit('change', selectedAddress.value?.id) */
+      // 关闭对话框
+      visibleDialog.value = false
+    }
+    // 打开对话框并清空selectedAddress
+    const openvisibleDialog = () => {
+      selectedAddress.value = null
+      visibleDialog.value = true
+    }
+    // 获取添加收货地址实例
+    const addressEditComp = ref(null)
+    const openAddressEdit = () => {
+      addressEditComp.value.openvisibleDialog()
+    }
+    // 新增收货地址
+    const successHandler = (FormData) => {
+      const ob = props.list
+      const jsonStr = JSON.stringify(FormData)
+      ob.unshift(JSON.parse(jsonStr))
+    }
+    return {
+      showAddress,
+      visibleDialog,
+      selectedAddress,
+      confirmAddressFn,
+      openvisibleDialog,
+      addressEditComp,
+      openAddressEdit,
+      successHandler
+    }
   }
 }
 </script>
@@ -120,4 +175,30 @@ export default {
     }
   }
 }
-</style>
+
+.xtx-dialog {
+  .text {
+    flex: 1;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+
+    &.item {
+      border: 1px solid #f5f5f5;
+      margin-bottom: 10px;
+      cursor: pointer;
+
+      &.active,
+      &:hover {
+        border-color: @xtxColor;
+        background: lighten(@xtxColor, 50%);
+      }
+
+      >ul {
+        padding: 10px;
+        font-size: 14px;
+        line-height: 30px;
+      }
+    }
+  }
+}</style>

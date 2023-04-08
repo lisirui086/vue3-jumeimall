@@ -2,7 +2,7 @@
   <div class="xtx-dialog" v-show="visible" :class="{fade}">
     <div class="wrapper" :class="{fade}">
       <div class="header">
-        <h3>切换收货地址</h3>
+        <h3>{{title}}</h3>
         <a href="JavaScript:;" class="iconfont icon-close-new" @click="closeDialog"></a>
       </div>
       <div class="body">
