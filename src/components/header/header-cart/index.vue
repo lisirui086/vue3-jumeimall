@@ -36,7 +36,6 @@
 // 引入vuex
 import { useStore } from 'vuex'
 import { computed } from 'vue'
-import Message from '@/components/library/Message'
 export default {
   name: 'HeaderCart',
   setup () {
@@ -45,9 +44,7 @@ export default {
     const total = computed(() => getters['cart/validTotal'])
     const amount = computed(() => getters['cart/validAmount'])
     // 更新购物车
-    dispatch('cart/findCart').then(() => {
-      Message({ type: 'success', text: '更新本地购物车成功' })
-    })
+    dispatch('cart/findCart')
     // 删除购物车商品
     const deleteCart = (skuId) => {
       dispatch('cart/deleteCart', skuId)

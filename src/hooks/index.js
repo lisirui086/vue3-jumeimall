@@ -3,8 +3,9 @@
 // target { Element } Dom对象
 // apiFn { function } API函数
 // 引入 useIntersectionObserver   方法
-import { useIntersectionObserver } from '@vueuse/core'
-import { ref } from 'vue'
+import { useIntersectionObserver, useIntervalFn } from '@vueuse/core'
+import dayjs from 'dayjs'
+import { ref, onUnmounted } from 'vue'
 // 懒加载函数
 export const useLazyData = (apiFn) => {
   const result = ref([])
@@ -31,4 +32,30 @@ export const useLazyData = (apiFn) => {
     }
   )
   return { result, target }
+}
+// 支付倒计时
+export const usePayTime = () => {
+  // 存储真正的倒计时
+  const timer = ref(30 * 60)
+  const timeText = ref('')
+  const { pause, resume } = useIntervalFn(() => {
+    timer.value--
+    // 转化时间格式
+    timeText.value = dayjs.unix(timer.value).format('mm分ss秒')
+    if (timer.value <= 0) {
+      pause()
+    }
+  }, 1000, false)
+  // 组件卸载清除到期时
+  onUnmounted(() => {
+    pause()
+  })
+  // 将resume return 出去
+  const start = (countDown) => {
+    timer.value = countDown
+    // 防止已加载空白卡顿
+    timeText.value = dayjs.unix(timer.value).format('mm分ss秒')
+    resume()
+  }
+  return { start, timeText }
 }

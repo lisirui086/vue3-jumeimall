@@ -207,7 +207,7 @@ export default {
             // 进行跳转 跳转到上一页或者首页
             router.push(route.query.redirectUrl || '/')
             // 消息提示
-            Message({ type: 'success', text: `${form.account}，欢迎你` })
+            Message({ type: 'success', text: `${store.state.user.profile.account}，欢迎你` })
           })
         }
       } catch (e) {

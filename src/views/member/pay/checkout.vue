@@ -82,7 +82,7 @@
         </div>
         <!-- 提交订单 -->
         <div class="submit">
-          <XtxButton type="primary">提交订单</XtxButton>
+          <XtxButton type="primary" @click="submitOrder">提交订单</XtxButton>
         </div>
       </div>
     </div>
@@ -92,25 +92,49 @@
 // 引入子组件
 import CheckoutAddress from './checkout-address'
 // 引入后台api接口
-import { createdOrder } from '@/api/order'
+import { createdOrder, submitOrderApi } from '@/api/order'
 // 引入组合式api
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import Message from '@/components/library/Message'
+import { useRouter } from 'vue-router'
 export default {
   name: 'PayCheckoutPage',
   components: { CheckoutAddress },
   setup () {
+    // 存储需要提交给提交订单的信息
+    const reqParams = reactive({
+      // 商品集合
+      goods: [],
+      // 所选地址Id
+      addressId: null,
+      deliveryTimeType: 1,
+      payType: 1,
+      payChannel: 1,
+      buyerMessage: ''
+    })
     // 存储订单商品信息
     const order = ref(null)
     // 发请求获取订单信息
     createdOrder().then(data => {
       order.value = data.result
+      reqParams.goods = order.value.goods.map(({ skuId, count }) => ({ skuId, count }))
     })
     // 存储收货地址id
-    const addressId = ref(null)
     const changeAddress = (id) => {
-      addressId.value = id
+      reqParams.addressId = id
     }
-    return { order, changeAddress }
+    // 提交订单
+    const router = useRouter()
+    const submitOrder = () => {
+      if (!reqParams.addressId) return Message({ type: 'error', text: '请选择收货地址' })
+      submitOrderApi(reqParams).then(data => {
+        // 提示
+        Message({ type: 'success', text: '下单成功' })
+        // 跳转支付页面
+        router.push(`/member/pay?orderId=${data.result.id}`)
+      })
+    }
+    return { order, changeAddress, reqParams, submitOrder }
   }
 }
 </script>

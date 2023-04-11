@@ -5,13 +5,13 @@
       <ul v-if="showAddress">
         <li><span>收<i />货<i />人：</span>{{ showAddress.receiver }}</li>
         <li><span>联系方式：</span>{{ showAddress.contact }}</li>
-        <li><span>收货地址：</span>{{ showAddress.fullLocation + showAddress.countyCode + showAddress.address }}</li>
+        <li><span>收货地址：</span>{{ showAddress.fullLocation.replace(/ /g, '') + showAddress.countyCode + showAddress.address }}</li>
       </ul>
-      <a href="javascript:;">修改地址</a>
+      <a href="javascript:;" @click="openAddressEdit(showAddress)">修改地址</a>
     </div>
     <div class="action">
       <XtxButton class="btn" @click="openvisibleDialog">切换地址</XtxButton>
-      <XtxButton class="btn" @click="openAddressEdit">添加地址</XtxButton>
+      <XtxButton class="btn" @click="openAddressEdit({})">添加地址</XtxButton>
     </div>
     <XtxDialog title="切换收货地址" v-model:visible="visibleDialog">
       <div class="text item" :class="{ active: selectedAddress && selectedAddress.id === item.id }"
@@ -89,14 +89,22 @@ export default {
     }
     // 获取添加收货地址实例
     const addressEditComp = ref(null)
-    const openAddressEdit = () => {
-      addressEditComp.value.openvisibleDialog()
+    const openAddressEdit = (address) => {
+      addressEditComp.value.openvisibleDialog(address)
     }
     // 新增收货地址
     const successHandler = (FormData) => {
-      const ob = props.list
-      const jsonStr = JSON.stringify(FormData)
-      ob.unshift(JSON.parse(jsonStr))
+      // 根据已有的id寻找，有则是修改，无则是添加
+      const address = props.list.find(item => item.id === FormData.id)
+      if (address) {
+        for (const key in address) {
+          address[key] = FormData[key]
+        }
+      } else {
+        const ob = props.list
+        const jsonStr = JSON.stringify(FormData)
+        ob.unshift(JSON.parse(jsonStr))
+      }
     }
     return {
       showAddress,

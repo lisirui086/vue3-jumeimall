@@ -10,6 +10,8 @@ const Login = () => import('@/views/login')
 const LoginCallback = () => import('@/views/login/login-callback')
 const Cart = () => import('@/views/cart')
 const PayCheckout = () => import('@/views/member/pay/checkout.vue')
+const Pay = () => import('@/views/member/pay')
+const PayResult = () => import('@/views/member/pay/checkout-result')
 
 // 路由规则
 const routes = [
@@ -40,6 +42,14 @@ const routes = [
       {
         path: '/member/checkout',
         component: PayCheckout
+      },
+      {
+        path: '/member/pay',
+        component: Pay
+      },
+      {
+        path: '/pay/callback',
+        component: PayResult
       }
     ]
   },
