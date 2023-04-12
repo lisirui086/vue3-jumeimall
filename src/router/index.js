@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { h } from 'vue'
 import store from '@/store'
 // 引入路由组件 路由懒加载
 const Layout = () => import('@/views/Layout.vue')
@@ -12,6 +13,10 @@ const Cart = () => import('@/views/cart')
 const PayCheckout = () => import('@/views/member/pay/checkout.vue')
 const Pay = () => import('@/views/member/pay')
 const PayResult = () => import('@/views/member/pay/checkout-result')
+const MemberLayout = () => import('@/views/member/Layout')
+const MemberHome = () => import('@/views/member/home')
+const MemberOrder = () => import('@/views/member/order')
+const MemberOrderDetail = () => import('@/views/member/order/detail')
 
 // 路由规则
 const routes = [
@@ -50,6 +55,38 @@ const routes = [
       {
         path: '/pay/callback',
         component: PayResult
+      },
+      {
+        path: '/member',
+        component: MemberLayout,
+        children: [
+          {
+            path: '/member',
+            component: MemberHome
+          },
+          {
+            path: '/member/order',
+            component: { render: () => h(<RouterView />) },
+            children: [
+              {
+                path: '',
+                component: MemberOrder
+              },
+              {
+                path: ':id',
+                component: MemberOrderDetail
+              }
+            ]
+          }
+          /* {
+            path: '/member/order',
+            component: MemberOrder
+          },
+          {
+            path: '/member/order/:id',
+            component: MemberOrderDetail
+          } */
+        ]
       }
     ]
   },

@@ -8,5 +8,7 @@ import 'normalize.css'
 import '@/assets/styles/common.less'
 // 引入自定义UI
 import UI from '@/components/library'
+// 引入mock
+import '@/mock'
 
 createApp(App).use(store).use(router).use(UI).mount('#app')

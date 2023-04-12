@@ -109,7 +109,7 @@ export default {
     // 表单数据
     const form = reactive({
       isAgree: true,
-      account: null,
+      account: 'cdshi0007',
       password: null,
       mobile: null,
       code: null
