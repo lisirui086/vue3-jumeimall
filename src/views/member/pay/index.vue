@@ -69,7 +69,7 @@ export default {
     // 获取订单详情
     const order = ref(null)
     // 获取订单详情
-    findOrderDetail(route.query.OrderId).then(data => {
+    findOrderDetail(route.query.orderId).then(data => {
       order.value = data.result
       // 将countDown倒计时给timer
       // timer.value = data.result.countdown
@@ -83,7 +83,7 @@ export default {
     const { start, timeText } = usePayTime()
     // 点击支付宝跳转地址
     const redirect = encodeURIComponent('http://www.corho.com:8080/#/pay/callback')
-    const payUrl = `${baseURL}pay/aliPay?orderId=${route.query.OrderId}&redirect=${redirect}`
+    const payUrl = `${baseURL}pay/aliPay?orderId=${route.query.orderId}&redirect=${redirect}`
     // 支付对话框 默认不显示
     const visibleDialog = ref(false)
     return { order, timeText, payUrl, visibleDialog }

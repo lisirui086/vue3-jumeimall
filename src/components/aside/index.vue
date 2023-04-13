@@ -3,7 +3,7 @@
     <div class="user-manage">
       <h4>我的账户</h4>
       <div class="links">
-        <router-link to="/member" active-class="active">个人中心</router-link>
+        <router-link to="/member"  exact-active-class="active">个人中心</router-link>
         <a href="javascript:;">消息通知</a>
         <a href="javascript:;">个人信息</a>
         <a href="javascript:;">安全设置</a>

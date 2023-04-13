@@ -32,11 +32,12 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 export default {
   name: 'XtxPayResultPage',
-  setup (props) {
+  setup () {
     const route = useRoute()
     const order = ref(null)
     // 发请求
     findOrderDetail(route.query.orderId).then(data => {
+      console.dir(data)
       order.value = data.result
     })
     return { order }
