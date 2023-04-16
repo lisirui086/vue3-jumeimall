@@ -21,3 +21,5 @@ export const deleteOrder = (orderId) => request('/member/order', 'delete', { ids
 export const receiptOrder = (orderId) => request(`/member/order/${orderId}/receipt`, 'put')
 // 查询物流
 export const logisticsOrder = (orderId) => request(`/member/order/${orderId}/logistics`, 'get')
+// 订单-再次购买
+export const repurchaseOrder = (orderId) => request(`/member/order/repurchase/${orderId}`, 'get')

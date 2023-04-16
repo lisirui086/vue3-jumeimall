@@ -12,36 +12,42 @@
       <!-- 待付款 -->
       <template v-if="order.orderState === 1">
         <XtxButton @click="$router.push('/member/pay?id='+order.id)" type="primary" size="small">立即付款</XtxButton>
-        <XtxButton type="gray" size="small">取消订单</XtxButton>
+        <XtxButton type="gray" size="small" @click="handlerCancel(order)">取消订单</XtxButton>
       </template>
       <!-- 待发货 -->
       <template v-if="order.orderState === 2">
-        <XtxButton type="primary" size="small">再次购买</XtxButton>
+        <XtxButton type="primary" size="small" @click="$router.push(`/member/checkout?orderId=${order.id}`)">再次购买</XtxButton>
       </template>
       <!-- 待收货 -->
       <template v-if="order.orderState === 3">
-        <XtxButton type="primary" size="small">确认收货</XtxButton>
-        <XtxButton type="plain" size="small">再次购买</XtxButton>
+        <XtxButton type="primary" size="small" @click="handlerConfirm(order)">确认收货</XtxButton>
+        <XtxButton type="plain" size="small" @click="$router.push(`/member/checkout?orderId=${order.id}`)">再次购买</XtxButton>
       </template>
       <!-- 待评价 -->
       <template v-if="order.orderState === 4">
-        <XtxButton type="primary" size="small">再次购买</XtxButton>
+        <XtxButton type="primary" size="small" @click="$router.push(`/member/checkout?orderId=${order.id}`)">再次购买</XtxButton>
         <XtxButton type="plain" size="small">评价商品</XtxButton>
         <XtxButton type="gray" size="small">申请售后</XtxButton>
       </template>
       <!-- 已完成 -->
       <template v-if="order.orderState === 5">
-        <XtxButton type="primary" size="small">再次购买</XtxButton>
+        <XtxButton type="primary" size="small" @click="$router.push(`/member/checkout?orderId=${order.id}`)">再次购买</XtxButton>
         <XtxButton type="plain" size="small">查看评价</XtxButton>
         <XtxButton type="gray" size="small">申请售后</XtxButton>
       </template>
       <!-- 已取消 -->
     </div>
+    <!-- 取消订单组件 -->
+    <OrderCancel ref="orderCancelCom" />
   </div>
 </template>
 <script>
 // 引入常量
 import { orderStatus } from '@/api/constants'
+// 引入取消订单函数、确定收货函数
+import { useCancel, useConfirm } from '@/views/member/order'
+// 引入取消订单组件
+import OrderCancel from '@/views/member/order/order-cancel'
 export default {
   name: 'OrderDetailAction',
   props: {
@@ -50,8 +56,9 @@ export default {
       default: () => {}
     }
   },
+  components: { OrderCancel },
   setup () {
-    return { orderStatus }
+    return { orderStatus, ...useCancel(), ...useConfirm() }
   }
 }
 </script>

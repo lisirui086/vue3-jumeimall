@@ -92,11 +92,11 @@
 // 引入子组件
 import CheckoutAddress from './checkout-address'
 // 引入后台api接口
-import { createdOrder, submitOrderApi } from '@/api/order'
+import { createdOrder, submitOrderApi, repurchaseOrder } from '@/api/order'
 // 引入组合式api
 import { ref, reactive } from 'vue'
 import Message from '@/components/library/Message'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 export default {
   name: 'PayCheckoutPage',
   components: { CheckoutAddress },
@@ -115,10 +115,20 @@ export default {
     // 存储订单商品信息
     const order = ref(null)
     // 发请求获取订单信息
-    createdOrder().then(data => {
-      order.value = data.result
-      reqParams.goods = order.value.goods.map(({ skuId, count }) => ({ skuId, count }))
-    })
+    const route = useRoute()
+    if (route.query.orderId) {
+      // 按照订单中的商品结算
+      repurchaseOrder(route.query.orderId).then(data => {
+        order.value = data.result
+        reqParams.goods = order.value.goods.map(({ skuId, count }) => ({ skuId, count }))
+      })
+    } else {
+      // 按照购物车的商品结算
+      createdOrder().then(data => {
+        order.value = data.result
+        reqParams.goods = order.value.goods.map(({ skuId, count }) => ({ skuId, count }))
+      })
+    }
     // 存储收货地址id
     const changeAddress = (id) => {
       reqParams.addressId = id

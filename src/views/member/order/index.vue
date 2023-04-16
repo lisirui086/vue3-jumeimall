@@ -7,8 +7,7 @@
       <div v-if="loading" class="loading"></div>
       <div class="none" v-if="!loading && orderList.length === 0">暂无数据</div>
       <OrderItem v-for="item in orderList" :key="item.id" :order="item" @on-cancel="handlerCancel"
-        @on-delete="handlerDelete" @on-confirm="handlerConfirm"
-        @on-logistics="handlerLogistics" />
+        @on-delete="handlerDelete" @on-confirm="handlerConfirm" @on-logistics="handlerLogistics" />
     </div>
     <!-- 分页组件 -->
     <XtxPagination v-if="total > 0" :pageSize=reqParams.pageSize :currentPage=reqParams.page :total="total"
@@ -16,7 +15,9 @@
     <!-- 取消原因组件 -->
     <OrderCancel ref="orderCancelCom" />
     <!-- 查看物流组件 -->
-    <OrderLogistics ref="orderLogisticsCom" />
+    <Teleport to="body">
+      <OrderLogistics ref="orderLogisticsCom" />
+    </Teleport>
   </div>
 </template>
 <script>
@@ -91,7 +92,7 @@ export default {
   }
 }
 // 取消订单逻辑
-const useCancel = () => {
+export const useCancel = () => {
   // 获取OrderCancel组件实例
   const orderCancelCom = ref(null)
   const handlerCancel = (order) => {
@@ -100,7 +101,7 @@ const useCancel = () => {
   return { handlerCancel, orderCancelCom }
 }
 // 确认收货逻辑
-const useConfirm = () => {
+export const useConfirm = () => {
   const handlerConfirm = (order) => {
     Confirm({ text: '请确认商品没问题后再确认收货' }).then(() => {
       receiptOrder(order.id).then(() => {
@@ -113,7 +114,7 @@ const useConfirm = () => {
   return { handlerConfirm }
 }
 // 查看物流逻辑
-const useLogistics = () => {
+export const useLogistics = () => {
   const orderLogisticsCom = ref(null)
   const handlerLogistics = (order) => {
     orderLogisticsCom.value.open(order)
