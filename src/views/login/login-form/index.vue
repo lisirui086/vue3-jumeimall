@@ -109,10 +109,11 @@ export default {
     // 表单数据
     const form = reactive({
       isAgree: true,
-      account: 'cdshi0007',
-      password: null,
-      mobile: null,
-      code: null
+      // zhousg
+      account: 'demo',
+      password: 'hm#qd@23!',
+      mobile: 13211112222,
+      code: 123456
     })
     // vee-validate 校验基本步骤
     // 1. 导入 Form Filed组件 将form Input替换，需要加上name用来指定将来的校验规则函数的

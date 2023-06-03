@@ -5,17 +5,17 @@ export default {
   // 用户名
   account (value) {
     if (!value) return '请输入用户名'
-    // 规则：字母开头6-20字符之间
+    // 规则：字母开头5-20字符之间
     // /^/开头的意思  \w字符的意思
-    if (!/^[a-zA-Z]\w{5,19}$/.test(value)) return '字母开头且6-20个字符'
+    if (!/^[a-zA-Z]\w{4,19}$/.test(value)) return '字母开头且5-20个字符'
     return true
   },
   // 完善信息时校验用户名是否已存在
   async accountApi (value) {
     if (!value) return '请输入用户名'
-    // 规则：字母开头6-20字符之间
+    // 规则：字母开头5-20字符之间
     // /^/开头的意思  \w字符的意思
-    if (!/^[a-zA-Z]\w{5,19}$/.test(value)) return '字母开头且6-20个字符'
+    if (!/^[a-zA-Z]\w{4,19}$/.test(value)) return '字母开头且5-20个字符'
     // 服务器校验是否已存在
     const data = await userAccountCheck(value)
     if (data.result.valid === true) return '用户名已存在'

@@ -1,24 +1,17 @@
 # vue3-eribbit-client-pc
 
-## Project setup
+##　用户信息
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+      用户名账号: demo
+      登录密码: hm#qd@23!
+      手机号: 13211112222
+      验证码: 123456
 ```
 
-### Compiles and minifies for production
+## 支付账号密码
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+买家账号jfjbwb4477@sandbox.com
+登录密码111111
+支付密码111111
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
