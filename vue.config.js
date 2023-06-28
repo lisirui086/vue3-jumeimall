@@ -20,6 +20,11 @@ module.exports = defineConfig({
     }
   },
   chainWebpack: (config) => {
+    config.plugin('html').tap((args) => {
+      args[0].title = '聚美商城'
+      console.log(args)
+      return args
+    })
     // 开启IP或域名访问webpack服务器权限
     /* config.devServer
       .port('8080')

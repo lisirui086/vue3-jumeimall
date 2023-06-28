@@ -7,7 +7,7 @@ export default {
     if (!value) return '请输入用户名'
     // 规则：字母开头5-20字符之间
     // /^/开头的意思  \w字符的意思
-    if (!/^[a-zA-Z]\w{4,19}$/.test(value)) return '字母开头且5-20个字符'
+    if (!/^[a-zA-Z]\w{3,19}$/.test(value)) return '字母开头且4-20个字符'
     return true
   },
   // 完善信息时校验用户名是否已存在
@@ -15,7 +15,7 @@ export default {
     if (!value) return '请输入用户名'
     // 规则：字母开头5-20字符之间
     // /^/开头的意思  \w字符的意思
-    if (!/^[a-zA-Z]\w{4,19}$/.test(value)) return '字母开头且5-20个字符'
+    if (!/^[a-zA-Z]\w{3,19}$/.test(value)) return '字母开头且4-20个字符'
     // 服务器校验是否已存在
     const data = await userAccountCheck(value)
     if (data.result.valid === true) return '用户名已存在'
@@ -27,7 +27,8 @@ export default {
     // 规则：密码是8-20个字符 包含至少一个大写字母 包含所有英文符号（不包括空格）。
     if (/\s/.test(value)) return '密码不允许有空格'
     // if (!/^(?=.*[A-Z])(?!.*\s).{8,20}$/.test(value)) return '密码8-20个字符且必须有大写字母'
-    if (!/^\w{6,24}$/.test(value)) return '密码是6-24个字符'
+    // if (!/^\w{6,24}$/.test(value)) return '密码是6-24个字符'
+    // if (/^[\w#@!]{6,24}$/.test(value)) return '密码是6-24个字符'
     return true
   },
   // 确认密码
@@ -36,7 +37,8 @@ export default {
     // 规则：密码是8-20个字符 包含至少一个大写字母 包含所有英文符号（不包括空格）。
     if (/\s/.test(value)) return '密码不允许有空格'
     // if (!/^(?=.*[A-Z])(?!.*\s).{8,20}$/.test(value)) return '密码8-20个字符且必须有大写字母'
-    if (!/^\w{6,24}$/.test(value)) return '密码是6-24个字符'
+    // if (!/^\w{6,24}$/.test(value)) return '密码是6-24个字符'
+    // if (/^[\w#@!]{6,24}$/.test(value)) return '密码是6-24个字符'
     if (value !== form.password) return '两次输入密码不一致!'
     return true
   },

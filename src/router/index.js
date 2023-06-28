@@ -78,14 +78,6 @@ const routes = [
               }
             ]
           }
-          /* {
-            path: '/member/order',
-            component: MemberOrder
-          },
-          {
-            path: '/member/order/:id',
-            component: MemberOrderDetail
-          } */
         ]
       }
     ]
